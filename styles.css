@@ -1,0 +1,85 @@
+body {
+    background-color: #2e3440;
+    color: #88c0d0;
+    font-size: 36px;
+    font-family: 'Courier New', Courier, monospace;
+    text-align: center;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+  
+#cyjan {
+    text-decoration: none;
+    color: #9fe8fc;
+}
+
+#cyjan:hover {
+    transition-duration: 400ms;
+    text-shadow: 0 0 2px #88c0d0;
+}
+
+#pin {    
+    width: 400px;
+    background-color: #4c566a;
+    padding: 15px 32px;
+    margin: 2px 2px;
+    color: #88c0d0;
+    border: none;
+    transition-duration: 200ms;
+}
+
+#pin:focus {
+    border: 0;
+    box-shadow: 0 0 10px #4c566a;
+}
+
+input[type="submit"] {
+    color: #88c0d0;
+    border: none;
+    width: 400px;
+    padding: .5rem;
+    margin: 1.5rem;
+    background-color: #65738f ;
+    transition-duration: 400ms;
+    
+}
+
+::placeholder {
+    color: #79c3d8;
+    text-align: center;
+}
+
+input[type="submit"]:hover {
+    -moz-box-shadow: 0 0 15px #65738f;
+    -webkit-box-shadow: 0 0 15px #65738f;
+    box-shadow: 0 0 15px #65738f;
+}
+
+@media (max-width: 410px) {
+
+    body {
+        font-size: 26px;
+    }
+    input[type="submit"], #pin {
+        width: 300px;
+    }
+}
+
+@media (max-width: 305px) {
+
+    body {
+        font-size: 24px;
+    }
+    input[type="submit"], #pin {
+        width: 200px;
+    }
+}
+
+footer {
+    font-size: medium;
+    text-align: center;
+}
