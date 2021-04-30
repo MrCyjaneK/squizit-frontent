@@ -59,8 +59,8 @@
     <transition-group name="fade">
       <div
         class="rounded-xl m-3 shadow-center p-3"
-        v-for="answer in answers"
-        :key="answer"
+        v-for="(answer, index) in answers"
+        :key="index"
       >
         <div>
           <p>Question:</p>
@@ -187,8 +187,8 @@ export default defineComponent({
 
       const answers: any[] = [];
 
-      const format = (answ: any) => {
-        const formatted = options[answ];
+      const format = (answerIndex: any) => {
+        const formatted = options[answerIndex];
         const { text, math, hasMath, media } = formatted;
 
         let image = "";
