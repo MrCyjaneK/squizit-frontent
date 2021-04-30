@@ -1,0 +1,49 @@
+
+@layer base {
+    * {
+        scrollbar-color: theme('colors.primary.400') transparent;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        @apply bg-transparent
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        @apply bg-green-400 rounded-xl;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        @apply bg-green-600;
+    }
+
+    ::-webkit-scrollbar-thumb:active {
+        @apply bg-green-300;
+    }
+
+    #app {
+        @apply overflow-y-auto w-full h-full fixed top-0 left-0 text-dark bg-light dark:text-light dark:bg-dark;
+    }
+
+    .katex-display {
+        @apply inline-block w-min;
+    }
+
+    a {
+        @apply duration-250 text-green-300 hover:text-green-600;
+    }
+
+    .fade-enter-active,
+    .fade-leave-active {
+        transition: opacity 1s ease;
+    }
+
+    .fade-enter-from,
+    .fade-leave-to {
+        opacity: 0;
+    }
+}
