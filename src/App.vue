@@ -1,8 +1,8 @@
 <template>
   <app-header />
-
-  <router-view />
-
+  <main class="min-h-9/12">
+    <router-view />
+  </main>
   <app-footer />
 </template>
 

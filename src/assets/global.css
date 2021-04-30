@@ -39,7 +39,7 @@
 
     .fade-enter-active,
     .fade-leave-active {
-        transition: opacity 1s ease;
+        transition: all 1s ease;
     }
 
     .fade-enter-from,

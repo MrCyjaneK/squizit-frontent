@@ -1,6 +1,6 @@
 <template>
   <header
-    class="relative flex items-center justify-center w-80 h-20 my-5 mx-auto"
+    class="relative mt-10 h-1/12 flex items-center justify-center w-80 my-5 mx-auto"
     @mouseover="squish = true"
     @mouseleave="squish = false"
   >
