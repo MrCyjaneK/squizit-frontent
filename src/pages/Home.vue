@@ -109,17 +109,21 @@
     >
       cancel
     </span>
-    <p class="text-4xl">Failed to get answers</p>
+    <p class="text-4xl">
+      Failed to fetch answers <br />
+      <p class="text-sm">{{ fetchError }}</p>
+    </p>
   </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, provide, ref, watch } from "vue";
+import { computed, defineComponent, ref, watch } from "vue";
 
 export default defineComponent({
   setup() {
     const pin = ref("");
 
+    const fetchError = ref("");
     const syntaxError = ref("");
 
     const fetching = ref(false);
@@ -139,17 +143,18 @@ export default defineComponent({
       fetched.value = false;
 
       const json = await await fetch(
-        pin.value.length ? `/api/hack?pin=${pin.value}` : `/api/answers`
+          pin.value.length ? `/api/hack?pin=${pin.value}` : `/api/answers`
       )
         .then((r) => r.json())
-        .catch(() => ({}));
+        .catch((error) => ({ error }));
 
       fetching.value = false;
       fetched.value = true;
 
-      if (!json.answers) {
+      if (!json.ok || !json.answers) {
+        fetchError.value = json.message || json.error || "";
         fetchedAnswers.value = [];
-        return;
+        return
       }
 
       fetchedAnswers.value = json.answers;
@@ -175,42 +180,56 @@ export default defineComponent({
 
     const getQuestionData = (answerData: any) => {
       const type = answerData.type;
+
       const question = {
         text: answerData.structure.query.text,
         image: answerData.structure.query.media?.length
           ? answerData.structure.query.media[0].url
           : "",
       };
+
+      const hasCorrectAnswer = !!(
+        answerData.structure.settings &&
+        answerData.structure.settings.hasCorrectAnswer
+      );
+
       const answerOptions = answerData.answer.options;
       const options = answerOptions || answerData.structure.options;
       const answer = answerData.answer.answer;
 
       const answers: any[] = [];
 
-      const format = (answerIndex: any) => {
-        const formatted = options[answerIndex];
-        const { text, math, hasMath, media } = formatted;
+      if (hasCorrectAnswer) {
+        const format = (answerIndex: any) => {
+          const formatted = options[answerIndex];
+          const { text, math, hasMath, media } = formatted;
 
-        let image = "";
-        if (media?.length) image = media[0].url;
+          let image = "";
+          if (media?.length) image = media[0].url;
 
-        const answer = {
-          text: text ? text : hasMath ? math.latex.join("<br />") : "",
-          image: image || "",
+          const answer = {
+            text: text ? text : hasMath ? math.latex.join("<br />") : "",
+            image: image || "",
+          };
+
+          if (answer.text || answer.image) answers.push(answer);
         };
 
-        if (answer.text || answer.image) answers.push(answer);
-      };
+        if (Array.isArray(answer)) answer.forEach(format);
+        if (typeof answer === "number") format(answer);
+        if (answerOptions !== null) for (let i in answerOptions) format(i);
 
-      if (Array.isArray(answer)) answer.forEach(format);
-      if (typeof answer === "number") format(answer);
-      if (answerOptions !== null) for (let i in answerOptions) format(i);
-
-      if (!answers.length)
+        if (!answers.length)
+          answers.push({
+            text: "No answers have been found for this question",
+            image: "",
+          });
+      } else {
         answers.push({
-          text: "No answers have been found for this question",
+          text: "This question has no correct answers",
           image: "",
         });
+      }
 
       return {
         type,
@@ -222,6 +241,7 @@ export default defineComponent({
     return {
       pin,
       answers,
+      fetchError,
       syntaxError,
       fetching,
       fetched,
