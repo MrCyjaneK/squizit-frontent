@@ -1,6 +1,7 @@
 <template>
   <footer
-    class="bottom-0 left-1/2 transform -translate-x-1/2 fixed grid grid-cols-2 text-center w-11/12 max-w-150 p-5 rounded-t-3xl shadow-center bg-light dark:bg-dark"
+    class="mx-auto mb-5 w-11/12 grid max-w-150 grid-cols-2 text-center p-5 rounded-t-3xl shadow-center bg-light dark:bg-dark"
+    style="transform: translateY(calc(50% + 5px))"
   >
     <p>
       SquizIT made by
