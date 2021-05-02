@@ -1,15 +1,16 @@
 <template>
   <footer
-    class="mx-auto mb-5 w-11/12 grid max-w-150 grid-cols-2 text-center p-5 rounded-t-3xl shadow-center bg-light dark:bg-dark"
-    style="transform: translateY(calc(50% + 5px))"
+    class="bg-light mx-auto rounded-t-3xl h-30 shadow-center text-center max-w-150 grid p-5 w-11/12 sm:h-15 sm:grid-cols-2 dark:bg-dark"
   >
-    <p>
+    <p class="flex items-center justify-center">
       SquizIT made by
-      <a href="https://mrcyjanek.net" target="_blank">Cyjanek</a>
+      <a class="ml-1" href="https://mrcyjanek.net" target="_blank">Cyjanek</a>
     </p>
-    <p>
+    <p class="flex items-center justify-center">
       Frontend made by
-      <a href="https://im-beast.github.io/" target="_blank">Im-Beast</a>
+      <a class="ml-1" href="https://im-beast.github.io/" target="_blank"
+        >Im-Beast</a
+      >
     </p>
   </footer>
 </template>

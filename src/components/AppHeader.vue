@@ -1,11 +1,11 @@
 <template>
   <header
-    class="relative mt-10 h-1/12 flex items-center justify-center w-80 my-5 mx-auto"
+    class="flex flex-row mx-auto h-1/12 my-5 mt-10 relative items-center justify-center"
     @mouseover="squish = true"
     @mouseleave="squish = false"
   >
     <h1
-      class="text-5xl font-bold h-max transform duration-250 pointer-events-none"
+      class="font-bold h-max transform text-5xl duration-250 pointer-events-none"
       :class="{
         'scale-y-50 rotate-5': squish,
       }"
@@ -13,9 +13,9 @@
     >
       SquizIT
     </h1>
-
     <h1
-      class="absolute text-5xl right-5 transform duration-250 pointer-events-none"
+      class="transform text-5xl duration-250 absolute pointer-events-none"
+      style="left: calc(50% + 5rem)"
       :class="{
         'scale-y-50 rotate-5': squish,
         'opacity-0': !squish,
