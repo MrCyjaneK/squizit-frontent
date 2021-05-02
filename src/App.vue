@@ -41,6 +41,7 @@ export default defineComponent({
       donates: {
         donators: [],
         amount: 0,
+        target: 0,
       },
     });
 

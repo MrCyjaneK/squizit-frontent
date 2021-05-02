@@ -21,7 +21,7 @@
       <app-progress-bar
         class="w-full max-w-75"
         :value="websiteInfo.donates.amount"
-        :max="15"
+        :max="websiteInfo.donates.target"
         suffix="€"
       />
     </div>
