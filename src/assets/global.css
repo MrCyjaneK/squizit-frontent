@@ -37,9 +37,13 @@
         @apply duration-250 text-green-300 hover:text-green-600;
     }
 
+    .logo {
+        @apply bg-blue-100 h-11 mx-2 rounded-full shadow-center p-0.5;
+    }
+
     .fade-enter-active,
     .fade-leave-active {
-        transition: all 1s ease;
+        transition: all 0.5s ease;
     }
 
     .fade-enter-from,
