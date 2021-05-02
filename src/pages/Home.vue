@@ -141,8 +141,7 @@ export default defineComponent({
       fetched.value = false;
 
       const json = await await fetch(
-        `http://127.0.0.1:15932` +
-          (pin.value.length ? `/api/hack?pin=${pin.value}` : `/api/answers`)
+        pin.value.length ? `/api/hack?pin=${pin.value}` : `/api/answers`
       )
         .then((r) => r.json())
         .catch((error) => ({ error }));
