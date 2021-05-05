@@ -7,28 +7,36 @@
     >
       <div>
         <p>Question:</p>
-        <p
-          v-if="answer.question.text"
-          class="font-bold ml-2"
-          v-html="answer.question.text"
-        />
-        <img
-          class="mx-auto shadow-center max-h-20 zoomable-img"
-          v-if="answer.question.image"
-          :src="answer.question.image"
-        />
+        <div
+          class="bg-dark dark:bg-light !bg-opacity-5 rounded-xl p-3 flex items-center justify-center"
+        >
+          <img
+            class="rounded-xl mr-2 filter-drop-shadow max-h-20 zoomable-img"
+            v-if="answer.question.image"
+            :src="answer.question.image"
+          />
+          <p
+            v-if="answer.question.text"
+            class="font-bold text-center"
+            v-html="answer.question.text"
+          />
+        </div>
       </div>
 
       <div class="mt-5">
         <p>Answer{{ answer.answers.length > 1 ? "s" : "" }}:</p>
         <div
-          class="bg-light rounded-xl bg-opacity-10 m-1 text-left p-2"
+          class="bg-dark dark:bg-light !bg-opacity-10 rounded-xl m-1 text-left p-2"
           v-for="(formattedAnswer, index) in answer.answers"
           :key="index"
         >
-          <p v-if="formattedAnswer.text" v-html="formattedAnswer.text"></p>
+          <p
+            class="break-words"
+            v-if="formattedAnswer.text"
+            v-html="formattedAnswer.text"
+          ></p>
           <img
-            class="mx-auto shadow-center max-h-20 zoomable-img"
+            class="mx-auto rounded-xl filter-drop-shadow max-h-20 zoomable-img"
             v-if="formattedAnswer.image"
             :src="formattedAnswer.image"
           />
