@@ -18,8 +18,8 @@ import { defineComponent, ref } from "vue";
 
 export default defineComponent({
   emits: {
-    toggle(bool: boolean) {
-      return typeof bool === "boolean";
+    toggle(property: string, bool: boolean) {
+      return typeof property === "string" && typeof bool === "boolean";
     },
   },
   props: {

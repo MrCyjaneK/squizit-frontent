@@ -13,6 +13,12 @@
       class="z-30 rounded-3xl shadow-center fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-11/12 max-w-160 h-1/2 bg-light dark:bg-dark"
     >
       <checkbox-element
+        label="Dark mode"
+        property="darkMode"
+        :default="settingsStore.darkMode"
+        @toggle="setProperty"
+      />
+      <checkbox-element
         label="Force showing answers"
         property="forceShowingAnswers"
         :default="settingsStore.forceShowingAnswers"
@@ -45,6 +51,17 @@ export default defineComponent({
   setup() {
     const settingsStore = useSettingsStore();
 
+    const setProperty = (
+      property: keyof typeof settingsStore.$state,
+      value: any
+    ) => (settingsStore[property] = value);
+
+    const updateDarkMode = () => {
+      if (settingsStore.darkMode)
+        document.firstElementChild?.classList.add("dark");
+      else document.firstElementChild?.classList.remove("dark");
+    };
+
     let localSettings: any = localStorage.getItem("settings");
     if (localSettings) {
       try {
@@ -58,14 +75,12 @@ export default defineComponent({
       }
     }
 
+    updateDarkMode();
+
     watch(settingsStore.$state, () => {
       localStorage.setItem("settings", JSON.stringify(settingsStore.$state));
+      updateDarkMode();
     });
-
-    const setProperty = (
-      property: keyof typeof settingsStore.$state,
-      value: any
-    ) => (settingsStore[property] = value);
 
     return { settingsStore, setProperty };
   },

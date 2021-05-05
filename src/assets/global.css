@@ -34,7 +34,7 @@
     }
 
     a {
-        @apply duration-250 text-green-300 hover:text-green-600;
+        @apply duration-250 text-green-600 dark:text-green-300 hover:text-green-800 dark:hover:text-green-600 hover:underline;
     }
 
     .logo {
