@@ -1,52 +1,35 @@
 <template>
   <nav v-if="fetched && answers.length">
     <button
-      class="bg-light rounded-full font-extrabold shadow-center py-1 px-2 top-10 left-5 text-3xl z-10 duration-250 fixed material-icons dark:bg-dark hover:bg-green-300 hover:text-dark focus:outline-none active:bg-green-400"
+      class="bg-light rounded-full outline-none font-extrabold shadow-center py-1 px-2 top-10 left-5 text-3xl z-10 duration-250 fixed material-icons dark:bg-dark hover:bg-green-300 hover:text-dark focus:outline-none active:bg-green-400"
       @click="resetAnswers"
     >
       arrow_back
     </button>
   </nav>
-  <div v-else-if="fetching && !fetched" class="text-center">
-    <span
-      class="text-dark text-center animate-spin text-6xl material-icons pointer-events-none select-none dark:text-light"
+
+  <nav>
+    <button
+      class="bg-light rounded-full font-extrabold shadow-center py-1 px-2 top-10 right-5 text-3xl z-10 duration-250 fixed material-icons dark:bg-dark hover:bg-green-300 hover:text-dark outline-none focus:outline-none active:bg-green-400"
+      @click="showSettings = true"
     >
-      donut_large
-    </span>
-    <br />
-    <p class="text-4xl">Getting answers</p>
-  </div>
-  <div v-else-if="fetched && !answers.length" class="text-center">
-    <span
-      class="text-red-500 text-6xl material-icons pointer-events-none select-none"
-    >
-      cancel
-    </span>
-    <br />
-    <span class="text-4xl">
-      Failed to fetch answers <br />
-      <p class="text-sm">{{ fetchError }}</p>
-    </span>
-  </div>
-  <app-donates
-    v-else-if="!fetched || !answers.length"
-    :websiteInfo="websiteInfo"
+      settings
+    </button>
+  </nav>
+
+  <app-settings :show="showSettings" @close="showSettings = false" />
+
+  <loading-spinner
+    :check="!!answers.length"
+    :errorMessage="errors.fetching"
+    errorTitle="Failed fetching answers"
+    :fetched="fetched"
+    :fetching="fetching"
   />
 
-  <transition name="fade">
-    <div
-      v-if="zoomedImage"
-      class="bg-light rounded-3xl shadow-center p-5 transform top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 fixed dark:bg-dark"
-    >
-      <button
-        class="bg-light rounded-full font-extrabold shadow-center py-1 px-2 top-6 right-6 text-3xl z-10 duration-250 absolute fixed material-icons dark:bg-dark hover:bg-red-300 hover:text-dark focus:outline-none active:bg-red-400"
-        @click="zoomedImage = ''"
-      >
-        close
-      </button>
-      <img class="rounded-3xl shadow-center" :src="zoomedImage" />
-    </div>
-  </transition>
+  <app-donates v-if="!fetching && !fetched && !answers.length" />
+
+  <image-zoom :zoomedImage="zoomedImage" @close="zoomedImage = ''" />
 
   <transition name="fade">
     <div
@@ -54,17 +37,17 @@
       class="flex mx-auto my-10 max-w-150 transform w-11/12 items-center"
     >
       <div
-        v-if="syntaxError"
+        v-if="errors.pin"
         class="bg-light rounded-bl-none rounded-xl flex shadow-center p-3 transform right-0 -translate-y-20 items-center absolute dark:bg-dark"
       >
         <h1 class="font-extrabold mx-3 text-3xl text-red-500">!</h1>
-        {{ syntaxError }}
+        {{ errors.pin }}
       </div>
       <input
         class="outline-none rounded-l-3xl h-15 shadow-center w-full p-3 duration-250"
         :class="{
-          'bg-light dark:bg-dark': !syntaxError,
-          'bg-red-500': syntaxError,
+          'bg-light dark:bg-dark': !errors.pin,
+          'bg-red-500': errors.pin,
         }"
         type="text"
         placeholder="Pin"
@@ -72,7 +55,7 @@
       />
       <input
         class="outline-none bg-green-400 rounded-r-3xl h-15 shadow-center text-dark p-3 duration-250 hover:bg-green-300 active:bg-green-400 disabled:bg-red-300"
-        :disabled="!!syntaxError"
+        :disabled="!!errors.pin"
         type="submit"
         value="Submit"
         @click="getAnswers"
@@ -88,47 +71,49 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType, ref, watch } from "vue";
-
+import { computed, defineComponent, ref, watch } from "vue";
+import { Answer, FormattedAnswer, FormattedObject } from "../assets/types";
 import AppDonates from "../components/AppDonates.vue";
-import AppAnswers from "../components/AppAnswers.vue";
-import {
-  Answer,
-  FormattedObject,
-  FormattedAnswer,
-  SquizitInfo,
-} from "../assets/types";
+import AppSettings from "../components/AppSettings.vue";
+import ImageZoom from "../components/ImageZoom.vue";
+import LoadingSpinner from "../components/LoadingSpinner.vue";
+import AppAnswers from "../components/QuizAnswers.vue";
+import { useSettingsStore } from "../stores/settings";
 
 export default defineComponent({
-  props: {
-    websiteInfo: {
-      type: Object as PropType<SquizitInfo>,
-      default: {
-        ads: [],
-        info: "",
-        address: [],
-        donates: {
-          donators: [],
-          amount: 0,
-        },
-      },
-    },
-  },
   components: {
     AppDonates,
     AppAnswers,
+    AppSettings,
+    LoadingSpinner,
+    ImageZoom,
   },
   setup() {
     const pin = ref("");
 
-    const fetchError = ref("");
-    const syntaxError = ref("");
+    const errors = ref({
+      fetching: "",
+      pin: "",
+    });
 
     const fetching = ref(false);
     const fetched = ref(false);
     const fetchedAnswers = ref([]);
 
     const zoomedImage = ref("");
+
+    const showSettings = ref(false);
+
+    const settingsStore = useSettingsStore();
+
+    document.addEventListener("click", (e) => {
+      const element = e.target as HTMLElement | null;
+      if (
+        element?.nodeName === "IMG" &&
+        element?.classList.contains("zoomable-img")
+      )
+        zoomedImage.value = (element as HTMLImageElement).src;
+    });
 
     const resetAnswers = () => {
       fetching.value = false;
@@ -139,6 +124,7 @@ export default defineComponent({
     const getAnswers = async () => {
       fetching.value = true;
       fetched.value = false;
+      fetchedAnswers.value = [];
 
       const json = await await fetch(
         pin.value.length ? `/api/hack?pin=${pin.value}` : `/api/answers`
@@ -150,31 +136,35 @@ export default defineComponent({
       fetched.value = true;
 
       if (!json.ok || !json.answers) {
-        fetchError.value = json.message || json.error || "";
+        errors.value.fetching = json.message || json.error || "";
+        console.error(json.message || json.error || "");
         fetchedAnswers.value = [];
         return;
       }
 
       fetchedAnswers.value = json.answers;
-
-      setTimeout(() => {
-        Array.from(document.images).forEach((image) => {
-          image.addEventListener("click", () => {
-            zoomedImage.value = image.src;
-          });
-        });
-      }, 100);
     };
 
     watch(pin, (value) => {
       if (value && /[^0-9]/.test(value)) {
-        syntaxError.value = "PIN should only contain numbers";
+        errors.value.pin = "PIN should only contain numbers";
         return;
       }
-      syntaxError.value = "";
+      errors.value.pin = "";
     });
 
-    const answers = computed(() => fetchedAnswers.value.map(getQuestionData));
+    const answers = computed(() => {
+      let value: FormattedAnswer[] = [];
+      try {
+        value = fetchedAnswers.value.map(getQuestionData);
+      } catch (err: unknown) {
+        fetching.value = false;
+        fetched.value = true;
+        console.error(err);
+        errors.value.fetching = String(err);
+      }
+      return value;
+    });
 
     const getQuestionData = (answerData: Answer) => {
       const type = answerData.type;
@@ -197,7 +187,7 @@ export default defineComponent({
 
       const answers: FormattedObject[] = [];
 
-      if (hasCorrectAnswer) {
+      if (hasCorrectAnswer || settingsStore.forceShowingAnswers) {
         const format = (answerIndex: any) => {
           const formatted = options[answerIndex];
           const { text, math, hasMath, media } = formatted;
@@ -239,14 +229,14 @@ export default defineComponent({
     return {
       pin,
       answers,
-      fetchError,
-      syntaxError,
       fetching,
+      showSettings,
       fetched,
       fetchedAnswers,
       getAnswers,
       resetAnswers,
       zoomedImage,
+      errors,
     };
   },
 });

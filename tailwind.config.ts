@@ -7,9 +7,6 @@ export default defineConfig({
     extend: {
       backgroundColor: ["active"],
       colors: {
-        primary: "#61Fc6F",
-        secondary: "#61FcBF",
-
         dark: "#2b2d37",
         light: "#fff",
       },

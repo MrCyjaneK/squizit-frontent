@@ -1,60 +1,57 @@
 <template>
   <app-header />
-  <!-- 3.75*3 = 11.25, *2=7.5 -->
+
   <main class="center">
-    <router-view :websiteInfo="websiteInfo" />
+    <router-view />
   </main>
 
-  <!-- ads -->
-  <div
-    class="mx-auto mb-5 max-w-150 grid w-11/12 grid-cols-3"
-    :style="`grid-template-columns: repeat(${websiteInfo.ads.length}, minmax(0, 1fr))`"
-  >
-    <div
-      v-for="(ad, index) in websiteInfo.ads"
-      :key="index"
-      v-html="ad"
-      class="rounded-3xl h-40 shadow-center mx-1 p-3"
-    ></div>
-  </div>
+  <app-ads :ads="squizitStore.websiteInfo.ads" />
 
   <app-footer />
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, Ref } from "vue";
+import { defineComponent, watch } from "vue";
 import { SquizitInfo } from "./assets/types";
-
+import AppAds from "./components/AppAds.vue";
 import AppFooter from "./components/AppFooter.vue";
 import AppHeader from "./components/AppHeader.vue";
+import { useSquizitStore } from "./stores/squizit";
 
 export default defineComponent({
   components: {
     AppFooter,
     AppHeader,
+    AppAds,
   },
   setup() {
-    const websiteInfo: Ref<SquizitInfo> = ref({
-      ads: [],
-      info: "",
-      address: [],
-      donates: {
-        donators: [],
-        amount: 0,
-        target: 0,
-      },
+    const squizitStore = useSquizitStore();
+
+    let localData: any = localStorage.getItem("squizit");
+    if (localData) {
+      try {
+        localData = JSON.parse(localData);
+        squizitStore.$state = {
+          ...squizitStore.$state,
+          ...localData,
+        };
+      } catch {
+        localStorage.removeItem("settings");
+      }
+    }
+
+    watch(squizitStore.$state, () => {
+      localStorage.setItem("squizit", JSON.stringify(squizitStore.$state));
     });
 
     fetch("https://mrcyjanek.net/projects/squizit/info.json")
       .then((res) => res.json())
-      .then((json) => {
-        websiteInfo.value = json;
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+      .then((json: SquizitInfo) => (squizitStore.websiteInfo = json))
+      .catch(console.warn);
 
-    return { websiteInfo };
+    return {
+      squizitStore,
+    };
   },
 });
 </script>
