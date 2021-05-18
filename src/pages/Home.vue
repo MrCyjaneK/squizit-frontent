@@ -44,7 +44,7 @@
         {{ errors.pin }}
       </div>
       <input
-        class="outline-none rounded-l-3xl h-15 shadow-center w-full p-3 duration-250"
+        class="outline-none rounded-l-3xl h-15 shadow-center w-half p-3 duration-250"
         :class="{
           'bg-light dark:bg-dark': !errors.pin,
           'bg-red-500': errors.pin,
@@ -52,6 +52,16 @@
         type="text"
         placeholder="Pin"
         v-model="pin"
+      />
+      <input
+        class="outline-none h-15 shadow-center w-full p-3 duration-250"
+        :class="{
+          'bg-light dark:bg-dark': !errors.pin,
+          'bg-red-500': errors.pin,
+        }"
+        id="ikey"
+        type="text"
+        placeholder="Key (from our discord)"
       />
       <input
         class="outline-none bg-green-400 rounded-r-3xl h-15 shadow-center text-dark p-3 duration-250 hover:bg-green-300 active:bg-green-400 disabled:bg-red-300"
@@ -90,7 +100,7 @@ export default defineComponent({
   },
   setup() {
     const pin = ref("");
-
+    const ikey = ref("");
     const errors = ref({
       fetching: "",
       pin: "",
@@ -127,7 +137,7 @@ export default defineComponent({
       fetchedAnswers.value = [];
 
       const json = await await fetch(
-        pin.value.length ? `/api/hack?pin=${pin.value}` : `/api/answers`
+        pin.value.length ? `/api/hack?pin=${pin.value}&key=${(<HTMLInputElement>document.getElementById('ikey')).value}` : `/api/answers`
       )
         .then((r) => r.json())
         .catch((error) => ({ error }));
