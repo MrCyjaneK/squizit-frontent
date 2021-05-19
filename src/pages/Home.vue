@@ -51,6 +51,7 @@
         }"
         type="text"
         placeholder="Pin"
+        autocomplete="off"
         v-model="pin"
       />
       <input
@@ -61,6 +62,7 @@
         }"
         id="ikey"
         type="text"
+        autocomplete="off"
         placeholder="Key (from our discord)"
       />
       <input
