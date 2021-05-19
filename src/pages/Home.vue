@@ -145,8 +145,8 @@ export default defineComponent({
       fetching.value = false;
       fetched.value = true;
 
-      if (!json.ok || !json.answers) {
-        errors.value.fetching = json.message || json.error || "";
+      if (json.answers.length == 0) {
+        errors.value.fetching = json.message || json.error || "Something's wrong, I can feel it. discord.gg/dS5zpHRC9E";
         console.error(json.message || json.error || "");
         fetchedAnswers.value = [];
         return;
